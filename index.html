@@ -104,6 +104,13 @@
         else player.jump.jumpForce = 20
         player.movement()
         player.draw()
+
+        if (player.x + 20 >= map.initX && player.x <= map.initX + 60) {
+          if (player.y >= (440 - map.obsHeight - 20)) {
+            alert("Se fodeo.");
+            location.reload(); 
+          }
+        }
       }
 
       window.addEventListener("keydown", function(e){
