@@ -32,13 +32,14 @@
         obsHeight :Math.floor(Math.random() * (80 - 40)) + 40,
         obsVelocity: 5,
         obsMaxVelocity: 25,
+        obsWidth: 30,
         ground : function(){
           ctx.fillStyle = 'black'
-          ctx.fillRect(0, 440, canvas.width, 70);
+          ctx.fillRect(0, 440, canvas.width, 60);
         },
         obs : function(x){
           ctx.fillStyle = 'black'
-          ctx.fillRect(x, (440 - this.obsHeight), 30, this.obsHeight)
+          ctx.fillRect(x, (440 - this.obsHeight), this.obsWidth, this.obsHeight)
         },
         draw : function(){
           if(this.initX < -20) {
@@ -55,11 +56,12 @@
       let player = {
         x: 50,
         y: 50,
+        radius: 25,
         velocity: 10,
         draw: function(){
           ctx.fillStyle = 'red'
           ctx.beginPath();
-          ctx.arc(this.x, this.y, 25,0,2*Math.PI);
+          ctx.arc(this.x, this.y, this.radius,0,2*Math.PI);
           ctx.fill();
           ctx.stroke();
         },
@@ -69,7 +71,9 @@
             if(this.x > 30) this.x -= this.velocity
           }
           // if(controlls.down) this.y += this.velocity
-          if(controlls.right) this.x += this.velocity
+          if(controlls.right){
+            if(this.x < 700- this.radius) this.x += this.velocity
+          }
         },
         jump : {
           state : false,
@@ -96,6 +100,12 @@
       }
 
       function gameloop(){
+        if (player.x + player.radius >= map.initX && player.x - player.radius <= map.initX + map.obsWidth) {
+          if (player.y >= (440 - map.obsHeight - player.radius )) {
+            alert("Você Perdeu!")
+            location.reload(); 
+          }
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         map.draw()
         if(player.y < 400) world.gravity()
@@ -105,12 +115,6 @@
         player.movement()
         player.draw()
 
-        if (player.x + 20 >= map.initX && player.x <= map.initX + 60) {
-          if (player.y >= (440 - map.obsHeight - 20)) {
-            alert("Se fodeo.");
-            location.reload(); 
-          }
-        }
       }
 
       window.addEventListener("keydown", function(e){
