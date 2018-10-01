@@ -18,14 +18,14 @@
         obsVelocity: 0.5,
         obsMaxVelocity: 80,
         obsWidth: 30,
-        groundHeight: 60,
+        groundHeight: 190,
         ground : function(){
           ctx.fillStyle = 'black'
-          ctx.fillRect(0, 440, canvas.width, this.groundHeight);
+          ctx.fillRect(0, (canvas.height - this.groundHeight), canvas.width, this.groundHeight);
         },
         obs : function(x){
           ctx.fillStyle = 'black'
-          ctx.fillRect(x, (440 - this.obsHeight), this.obsWidth, this.obsHeight)
+          ctx.fillRect(x, ((canvas.height - this.groundHeight) - this.obsHeight), this.obsWidth, this.obsHeight)
         },
         init : function(){
           /*
@@ -34,7 +34,7 @@
           if(this.initX < -20) {
             scoreboard.update()
             this.initX = 900
-            this.obsHeight = Math.floor(Math.random() * (80 - 40)) + 40;
+            this.obsHeight = Math.floor(Math.random() * 70 + 50)
             if(this.obsVelocity < this.obsMaxVelocity) this.obsVelocity += 0.2
           }
 
@@ -46,7 +46,7 @@
 
       let player = {
         x: 50,
-        y: 415,
+        y: canvas.height - map.groundHeight - 25,
         radius: 25,
         velocity: 0.8,
         init: function(){
