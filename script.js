@@ -8,7 +8,8 @@
         left : false,
         right : false
       }
-      
+
+      // inicializa o placar
       scoreboard.draw()
 
       let map = {
@@ -17,21 +18,26 @@
         obsVelocity: 0.5,
         obsMaxVelocity: 80,
         obsWidth: 30,
+        groundHeight: 60,
         ground : function(){
           ctx.fillStyle = 'black'
-          ctx.fillRect(0, 440, canvas.width, 60);
+          ctx.fillRect(0, 440, canvas.width, this.groundHeight);
         },
         obs : function(x){
           ctx.fillStyle = 'black'
           ctx.fillRect(x, (440 - this.obsHeight), this.obsWidth, this.obsHeight)
         },
-        draw : function(){
+        init : function(){
+          /*
+          * Reseta a possição X do obstaculo e gera uma nova altura, incrementando 1 ponto e velocidade.
+          */
           if(this.initX < -20) {
             scoreboard.update()
             this.initX = 900
             this.obsHeight = Math.floor(Math.random() * (80 - 40)) + 40;
             if(this.obsVelocity < this.obsMaxVelocity) this.obsVelocity += 0.2
           }
+
           this.ground()
           this.obs(this.initX)
           this.initX -= this.obsVelocity
@@ -43,7 +49,15 @@
         y: 415,
         radius: 25,
         velocity: 0.8,
-        draw: function(){
+        init: function(){
+
+          this.movement()
+
+          if(this.jump.state)
+            this.jump.exec()
+          else 
+            this.jump.jumpForce = 2.5
+
           ctx.fillStyle = 'red'
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius,0,2*Math.PI);
@@ -53,10 +67,10 @@
         movement : function(){
           if(controlls.up) this.jump.state = true
           if(controlls.left) {
-            if(this.x > 30) this.x -= this.velocity
+            if(this.x > 0 + this.radius) this.x -= this.velocity
           }
           if(controlls.right){
-            if(this.x < 700- this.radius) this.x += this.velocity
+            if(this.x < 700 - this.radius) this.x += this.velocity
           }
         },
         jump : {
@@ -67,7 +81,7 @@
               this.jumpForce = this.jumpForce - world.gravityValue
               player.y -= this.jumpForce
             }else{
-              player.y = 415
+              player.y = (canvas.height - map.groundHeight - player.radius)
               this.state = false
             }
           }
@@ -84,20 +98,23 @@
       }
 
       function gameloop(){
-        if (player.x + player.radius >= map.initX && player.x - player.radius <= map.initX + map.obsWidth) {
-          if (player.y >= (440 - map.obsHeight - player.radius )) {
+        // colisão do objeto 
+        if (player.x + player.radius >= map.initX && 
+            player.x - player.radius <= map.initX + map.obsWidth) {
+          if (player.y >= ((canvas.height - map.groundHeight) - map.obsHeight - player.radius )) {
             scoreboard.updateRecord()
             location.reload(); 
           }
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        map.draw()
-        if(player.y < 415) world.gravity()
-        else world.gravitySpeed = 0
-        if(player.jump.state) player.jump.exec()
-        else player.jump.jumpForce = 2.5
-        player.movement()
-        player.draw()
+        
+        if(player.y < (canvas.height - map.groundHeight - player.radius)) 
+        world.gravity()
+        else 
+        world.gravitySpeed = 0
+        
+        map.init()
+        player.init()
 
       }
 
