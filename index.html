@@ -6,7 +6,26 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Game</title>
   <style>
+    * { margin: 0; }
   canvas { border: 1px black solid; }
+  .scoreboard {
+    background: #eee;
+    width: 700px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .scoreboard div:nth-child(1) {
+    flex: 2;
+    font-size: 24pt;
+  }
+  .scoreboard div:nth-child(1) {
+    flex: 1;
+  }
   </style>
 </head>
 <body>
@@ -14,7 +33,11 @@
   <canvas id="screen" width="700" height="500">
     Seu navegador não suporta HTML5
   </canvas>
+  <div class="scoreboard">
+
+  </div>
 </body>
 
+<script src="scoreboard.js"></script>
 <script src="script.js"></script>
 </html>

@@ -1,5 +1,6 @@
-const canvas = document.getElementById("screen")
+      const canvas = document.getElementById("screen")
       const ctx = canvas.getContext('2d')
+
 
       let controlls = {
         up : false,
@@ -7,12 +8,14 @@ const canvas = document.getElementById("screen")
         left : false,
         right : false
       }
+      
+      scoreboard.draw()
 
       let map = {
         initX: 900,
         obsHeight :Math.floor(Math.random() * (80 - 40)) + 40,
-        obsVelocity: 5,
-        obsMaxVelocity: 25,
+        obsVelocity: 0.5,
+        obsMaxVelocity: 80,
         obsWidth: 30,
         ground : function(){
           ctx.fillStyle = 'black'
@@ -24,9 +27,10 @@ const canvas = document.getElementById("screen")
         },
         draw : function(){
           if(this.initX < -20) {
+            scoreboard.update()
             this.initX = 900
             this.obsHeight = Math.floor(Math.random() * (80 - 40)) + 40;
-            if(this.obsVelocity < this.obsMaxVelocity) this.obsVelocity += 1
+            if(this.obsVelocity < this.obsMaxVelocity) this.obsVelocity += 0.2
           }
           this.ground()
           this.obs(this.initX)
@@ -36,9 +40,9 @@ const canvas = document.getElementById("screen")
 
       let player = {
         x: 50,
-        y: 50,
+        y: 415,
         radius: 25,
-        velocity: 10,
+        velocity: 0.8,
         draw: function(){
           ctx.fillStyle = 'red'
           ctx.beginPath();
@@ -51,16 +55,15 @@ const canvas = document.getElementById("screen")
           if(controlls.left) {
             if(this.x > 30) this.x -= this.velocity
           }
-          // if(controlls.down) this.y += this.velocity
           if(controlls.right){
             if(this.x < 700- this.radius) this.x += this.velocity
           }
         },
         jump : {
           state : false,
-          jumpForce : 20,
+          jumpForce : 2.5,
           exec : function(){
-            if(this.jumpForce > 1){
+            if(this.jumpForce > 0.1){
               this.jumpForce = this.jumpForce - world.gravityValue
               player.y -= this.jumpForce
             }else{
@@ -72,7 +75,7 @@ const canvas = document.getElementById("screen")
       }
 
       let world = {
-        gravityValue: 0.9,
+        gravityValue: 0.010,
         gravitySpeed: 0,
         gravity: function(){
           this.gravitySpeed += this.gravityValue
@@ -83,16 +86,16 @@ const canvas = document.getElementById("screen")
       function gameloop(){
         if (player.x + player.radius >= map.initX && player.x - player.radius <= map.initX + map.obsWidth) {
           if (player.y >= (440 - map.obsHeight - player.radius )) {
-            alert("Você Perdeu!")
+            scoreboard.updateRecord()
             location.reload(); 
           }
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         map.draw()
-        if(player.y < 400) world.gravity()
+        if(player.y < 415) world.gravity()
         else world.gravitySpeed = 0
         if(player.jump.state) player.jump.exec()
-        else player.jump.jumpForce = 20
+        else player.jump.jumpForce = 2.5
         player.movement()
         player.draw()
 
@@ -112,4 +115,4 @@ const canvas = document.getElementById("screen")
         if(e.keyCode === 40) controlls.down = false;
       })
 
-      setInterval(gameloop, 32)
+      setInterval(gameloop, 1)
